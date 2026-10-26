@@ -1,1 +1,107 @@
 @import "tailwindcss";
+
+/* ===== متغیرهای رنگی ===== */
+:root {
+  /* رنگ‌های اصلی - پالت خنثی حرفه‌ای */
+  --color-primary: #2d3748;
+  --color-primary-hover: #1a202c;
+  --color-accent: #4a5568;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f7fafc;
+  --color-border: #e2e8f0;
+  --color-text: #1a202c;
+  --color-text-secondary: #718096;
+  --color-text-muted: #a0aec0;
+  --color-error: #e53e3e;
+  --color-error-bg: #fff5f5;
+  --color-success: #38a169;
+  --color-input-bg: #ffffff;
+  --color-input-border: #e2e8f0;
+  --color-input-focus: #4a5568;
+  --color-shadow: rgba(0, 0, 0, 0.05);
+  --color-divider: #edf2f7;
+}
+
+html.dark {
+  --color-primary: #e2e8f0;
+  --color-primary-hover: #ffffff;
+  --color-accent: #a0aec0;
+  --color-surface: #1a1a2e;
+  --color-surface-alt: #16162a;
+  --color-border: #2d2d4a;
+  --color-text: #e8e8f0;
+  --color-text-secondary: #a0aec0;
+  --color-text-muted: #718096;
+  --color-error: #fc8181;
+  --color-error-bg: #1a0f0f;
+  --color-success: #68d391;
+  --color-input-bg: #16162a;
+  --color-input-border: #2d2d4a;
+  --color-input-focus: #a0aec0;
+  --color-shadow: rgba(0, 0, 0, 0.2);
+  --color-divider: #2d2d4a;
+}
+
+/* ===== استایل‌های پایه ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background-color: var(--color-surface-alt);
+  color: var(--color-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
+}
+
+/* ===== انیمیشن‌ها ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-right {
+  animation: slideInRight 0.6s ease-out forwards;
+}
+
+.animate-slide-left {
+  animation: slideInLeft 0.6s ease-out forwards;
+}
+
+/* ===== اسکرول‌بار ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
