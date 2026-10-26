@@ -7,18 +7,20 @@
  * - بخش راست: فرم ورود
  * - بخش چپ: معرفی ویژگی‌ها
  */
-import { ThemeProvider } from './context/ThemeContext';
+import { ThemeProvider, useThemeContext } from './context/ThemeContext';
 import { Header } from './components/Header';
 import { LoginForm } from './components/LoginForm';
 import { Features } from './components/Features';
 
-export default function App() {
+function LoginLayout() {
+  const { theme } = useThemeContext();
+  const isDark = theme === 'dark';
+
   return (
-    <ThemeProvider>
     <div
       className="min-h-screen flex flex-col transition-colors duration-300"
       style={{
-        backgroundColor: 'var(--color-surface-alt)',
+        backgroundColor: 'var(--color-bg-primary)',
         fontFamily: "'Vazirmatn', sans-serif",
       }}
     >
@@ -32,7 +34,9 @@ export default function App() {
           style={{
             backgroundColor: 'var(--color-surface)',
             border: '1px solid var(--color-border)',
-            boxShadow: '0 4px 24px var(--color-shadow)',
+            boxShadow: isDark
+              ? '0 8px 40px rgba(0, 0, 0, 0.4), 0 0 60px rgba(107, 85, 186, 0.05)'
+              : '0 8px 40px rgba(23, 20, 33, 0.06)',
           }}
         >
           <div className="flex flex-col lg:flex-row min-h-[520px]">
@@ -51,7 +55,7 @@ export default function App() {
             <div
               className="w-full lg:w-1/2 p-8 md:p-12 flex items-center"
               style={{
-                backgroundColor: 'var(--color-surface-alt)',
+                backgroundColor: isDark ? 'var(--color-bg-secondary)' : 'var(--color-highlight)',
               }}
             >
               <Features />
@@ -71,6 +75,13 @@ export default function App() {
         <p>© ۱۴۰۵ — تمامی حقوق محفوظ است</p>
       </footer>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <LoginLayout />
     </ThemeProvider>
   );
 }

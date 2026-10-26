@@ -2,6 +2,7 @@
  * کامپوننت ویژگی‌های سامانه
  * سه ویژگی اصلی با آیکون، عنوان و توضیح
  */
+import { useThemeContext } from '../context/ThemeContext';
 import { Shield, Zap, BarChart3 } from 'lucide-react';
 
 interface Feature {
@@ -29,13 +30,16 @@ const features: Feature[] = [
 ];
 
 export function Features() {
+  const { theme } = useThemeContext();
+  const isDark = theme === 'dark';
+
   return (
     <div className="animate-slide-left">
       {/* عنوان بخش */}
       <div className="mb-10">
         <h2
           className="text-2xl font-bold mb-3"
-          style={{ color: 'var(--color-text)' }}
+          style={{ color: 'var(--color-text-primary)' }}
         >
           چرا سامانه مدیریت هوشمند؟
         </h2>
@@ -59,9 +63,10 @@ export function Features() {
             <div
               className="flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
               style={{
-                backgroundColor: 'var(--color-surface)',
-                border: '1px solid var(--color-border)',
-                color: 'var(--color-accent)',
+                backgroundColor: isDark ? 'var(--color-surface-elevated)' : 'var(--color-highlight)',
+                border: `1px solid ${isDark ? '#4A397A' : '#E5E1EF'}`,
+                color: isDark ? '#A18CE5' : '#4C35A3',
+                boxShadow: isDark ? '0 2px 8px rgba(161, 140, 229, 0.1)' : 'none',
               }}
             >
               {feature.icon}
@@ -71,7 +76,7 @@ export function Features() {
             <div>
               <h3
                 className="text-sm font-semibold mb-1 transition-colors duration-200"
-                style={{ color: 'var(--color-text)' }}
+                style={{ color: 'var(--color-text-primary)' }}
               >
                 {feature.title}
               </h3>

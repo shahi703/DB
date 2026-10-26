@@ -76,21 +76,28 @@ export function LoginForm() {
     // const response = await api.login({ username, password });
   };
 
+  const isDark = theme === 'dark';
+
   return (
     <div className="w-full max-w-sm mx-auto animate-fade-in">
       {/* لوگو */}
       <div className="flex flex-col items-center mb-8">
         <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 hover:scale-105"
+          className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 hover:scale-105"
           style={{
-            background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
+            background: isDark
+              ? 'linear-gradient(135deg, #3D2980, #6B55BA)'
+              : 'linear-gradient(135deg, #4C35A3, #6652C7)',
+            boxShadow: isDark
+              ? '0 4px 20px rgba(107, 85, 186, 0.3)'
+              : '0 4px 20px rgba(76, 53, 163, 0.2)',
           }}
         >
           <LogIn size={26} strokeWidth={1.8} style={{ color: '#ffffff' }} />
         </div>
         <h1
           className="text-xl font-bold mb-2"
-          style={{ color: 'var(--color-text)' }}
+          style={{ color: 'var(--color-text-primary)' }}
         >
           سامانه مدیریت هوشمند
         </h1>
@@ -109,7 +116,7 @@ export function LoginForm() {
           <label
             htmlFor="username"
             className="block text-sm font-medium"
-            style={{ color: 'var(--color-text)' }}
+            style={{ color: 'var(--color-text-primary)' }}
           >
             نام کاربری
           </label>
@@ -131,16 +138,19 @@ export function LoginForm() {
               placeholder="نام کاربری خود را وارد کنید"
               autoComplete="username"
               className={`w-full pr-10 pl-4 py-3 rounded-xl text-sm transition-all duration-200 outline-none ${
-                errors.username ? 'ring-2 ring-red-400' : ''
+                errors.username ? 'ring-2' : ''
               }`}
               style={{
                 backgroundColor: 'var(--color-input-bg)',
-                border: `1px solid ${errors.username ? 'var(--color-error)' : 'var(--color-input-border)'}`,
-                color: 'var(--color-text)',
+                border: `1.5px solid ${errors.username ? 'var(--color-error)' : 'var(--color-input-border)'}`,
+                color: 'var(--color-text-primary)',
+                ...(errors.username ? { '--tw-ring-color': 'var(--color-error)' } as React.CSSProperties : {}),
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'var(--color-input-focus)';
-                e.target.style.boxShadow = '0 0 0 3px var(--color-shadow)';
+                if (!errors.username) {
+                  e.target.style.borderColor = 'var(--color-input-focus)';
+                  e.target.style.boxShadow = `0 0 0 3px var(--color-brand-glow)`;
+                }
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = errors.username ? 'var(--color-error)' : 'var(--color-input-border)';
@@ -153,7 +163,7 @@ export function LoginForm() {
           {errors.username && (
             <p
               id="username-error"
-              className="text-xs mt-1 flex items-center gap-1"
+              className="text-xs mt-1.5 flex items-center gap-1.5"
               style={{ color: 'var(--color-error)' }}
               role="alert"
             >
@@ -167,7 +177,7 @@ export function LoginForm() {
           <label
             htmlFor="password"
             className="block text-sm font-medium"
-            style={{ color: 'var(--color-text)' }}
+            style={{ color: 'var(--color-text-primary)' }}
           >
             رمز عبور
           </label>
@@ -189,16 +199,19 @@ export function LoginForm() {
               placeholder="رمز عبور خود را وارد کنید"
               autoComplete="current-password"
               className={`w-full pr-10 pl-10 py-3 rounded-xl text-sm transition-all duration-200 outline-none ${
-                errors.password ? 'ring-2 ring-red-400' : ''
+                errors.password ? 'ring-2' : ''
               }`}
               style={{
                 backgroundColor: 'var(--color-input-bg)',
-                border: `1px solid ${errors.password ? 'var(--color-error)' : 'var(--color-input-border)'}`,
-                color: 'var(--color-text)',
+                border: `1.5px solid ${errors.password ? 'var(--color-error)' : 'var(--color-input-border)'}`,
+                color: 'var(--color-text-primary)',
+                ...(errors.password ? { '--tw-ring-color': 'var(--color-error)' } as React.CSSProperties : {}),
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'var(--color-input-focus)';
-                e.target.style.boxShadow = '0 0 0 3px var(--color-shadow)';
+                if (!errors.password) {
+                  e.target.style.borderColor = 'var(--color-input-focus)';
+                  e.target.style.boxShadow = `0 0 0 3px var(--color-brand-glow)`;
+                }
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = errors.password ? 'var(--color-error)' : 'var(--color-input-border)';
@@ -211,7 +224,7 @@ export function LoginForm() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute left-3 top-1/2 -translate-y-1/2 p-1 rounded-md transition-colors duration-200 hover:opacity-70"
+              className="absolute left-3 top-1/2 -translate-y-1/2 p-1 rounded-md transition-colors duration-200"
               style={{ color: 'var(--color-text-muted)' }}
               aria-label={showPassword ? 'مخفی کردن رمز عبور' : 'نمایش رمز عبور'}
               tabIndex={-1}
@@ -222,7 +235,7 @@ export function LoginForm() {
           {errors.password && (
             <p
               id="password-error"
-              className="text-xs mt-1 flex items-center gap-1"
+              className="text-xs mt-1.5 flex items-center gap-1.5"
               style={{ color: 'var(--color-error)' }}
               role="alert"
             >
@@ -242,10 +255,14 @@ export function LoginForm() {
                 className="sr-only peer"
               />
               <div
-                className="w-4 h-4 rounded border transition-all duration-200 flex items-center justify-center peer-checked:border-transparent peer-focus:ring-2 peer-focus:ring-offset-1"
+                className="w-4.5 h-4.5 rounded-md border-2 transition-all duration-200 flex items-center justify-center peer-focus:ring-2 peer-focus:ring-offset-1"
                 style={{
                   borderColor: rememberMe ? 'transparent' : 'var(--color-input-border)',
-                  backgroundColor: rememberMe ? 'var(--color-primary)' : 'transparent',
+                  backgroundColor: rememberMe
+                    ? (isDark ? '#6B55BA' : '#4C35A3')
+                    : 'transparent',
+                  width: '18px',
+                  height: '18px',
                 }}
               >
                 {rememberMe && (
@@ -265,8 +282,8 @@ export function LoginForm() {
 
           <a
             href="#"
-            className="text-sm transition-colors duration-200 hover:underline underline-offset-2"
-            style={{ color: 'var(--color-accent)' }}
+            className="text-sm transition-all duration-200 hover:underline underline-offset-2"
+            style={{ color: isDark ? '#A18CE5' : '#4C35A3' }}
             onClick={(e) => {
               e.preventDefault();
               // TODO: مسیریابی به صفحه بازیابی رمز عبور
@@ -280,11 +297,15 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-300 ease-out hover:opacity-90 hover:shadow-lg active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2"
+          className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 ease-out hover:opacity-90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2"
           style={{
-            backgroundColor: 'var(--color-primary)',
-            color: theme === 'dark' ? '#1a1a2e' : '#ffffff',
-            boxShadow: '0 2px 8px var(--color-shadow)',
+            background: isDark
+              ? 'linear-gradient(135deg, #3D2980, #6B55BA)'
+              : 'linear-gradient(135deg, #4C35A3, #6652C7)',
+            color: '#ffffff',
+            boxShadow: isDark
+              ? '0 4px 16px rgba(107, 85, 186, 0.3)'
+              : '0 4px 16px rgba(76, 53, 163, 0.25)',
           }}
         >
           {isSubmitting ? (
@@ -303,5 +324,3 @@ export function LoginForm() {
     </div>
   );
 }
-
-

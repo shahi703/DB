@@ -1,45 +1,90 @@
 @import "tailwindcss";
 
-/* ===== متغیرهای رنگی ===== */
+/* ===================================================
+   متغیرهای رنگی — پالت رنگی سازمانی
+   Dark Mode & Light Mode
+   =================================================== */
+
+/* ===== Light Mode (پیش‌فرض) ===== */
 :root {
-  /* رنگ‌های اصلی - پالت خنثی حرفه‌ای */
-  --color-primary: #2d3748;
-  --color-primary-hover: #1a202c;
-  --color-accent: #4a5568;
-  --color-surface: #ffffff;
-  --color-surface-alt: #f7fafc;
-  --color-border: #e2e8f0;
-  --color-text: #1a202c;
-  --color-text-secondary: #718096;
-  --color-text-muted: #a0aec0;
-  --color-error: #e53e3e;
-  --color-error-bg: #fff5f5;
-  --color-success: #38a169;
-  --color-input-bg: #ffffff;
-  --color-input-border: #e2e8f0;
-  --color-input-focus: #4a5568;
-  --color-shadow: rgba(0, 0, 0, 0.05);
-  --color-divider: #edf2f7;
+  --color-bg-primary: #F7F6FB;
+  --color-bg-secondary: #F0ECFF;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
+  --color-sidebar: #211A35;
+  --color-sidebar-border: #E8E4F2;
+
+  --color-brand: #4C35A3;
+  --color-brand-hover: #6652C7;
+  --color-brand-glow: rgba(76, 53, 163, 0.15);
+
+  --color-text-primary: #171421;
+  --color-text-secondary: #6B6780;
+  --color-text-muted: #9B97AD;
+  --color-text-on-brand: #FFFFFF;
+
+  --color-border: #E5E1EF;
+  --color-border-light: #E8E4F2;
+  --color-divider: #E5E1EF;
+
+  --color-input-bg: #FFFFFF;
+  --color-input-border: #E5E1EF;
+  --color-input-focus: #4C35A3;
+  --color-input-placeholder: #9B97AD;
+
+  --color-highlight: #F0ECFF;
+
+  --color-success: #16A34A;
+  --color-success-bg: #F0FDF4;
+  --color-warning: #D97706;
+  --color-warning-bg: #FFFBEB;
+  --color-error: #DC2626;
+  --color-error-bg: #FEF2F2;
+
+  --color-shadow: rgba(23, 20, 33, 0.06);
+  --color-shadow-lg: rgba(23, 20, 33, 0.1);
+  --color-overlay: rgba(23, 20, 33, 0.4);
 }
 
+/* ===== Dark Mode ===== */
 html.dark {
-  --color-primary: #e2e8f0;
-  --color-primary-hover: #ffffff;
-  --color-accent: #a0aec0;
-  --color-surface: #1a1a2e;
-  --color-surface-alt: #16162a;
-  --color-border: #2d2d4a;
-  --color-text: #e8e8f0;
-  --color-text-secondary: #a0aec0;
-  --color-text-muted: #718096;
-  --color-error: #fc8181;
-  --color-error-bg: #1a0f0f;
-  --color-success: #68d391;
-  --color-input-bg: #16162a;
-  --color-input-border: #2d2d4a;
-  --color-input-focus: #a0aec0;
-  --color-shadow: rgba(0, 0, 0, 0.2);
-  --color-divider: #2d2d4a;
+  --color-bg-primary: #151117;
+  --color-bg-secondary: #211735;
+  --color-surface: #291C4C;
+  --color-surface-elevated: #322167;
+  --color-sidebar: #211735;
+  --color-sidebar-border: #4A397A;
+
+  --color-brand: #3D2980;
+  --color-brand-hover: #6B55BA;
+  --color-brand-glow: rgba(107, 85, 186, 0.2);
+
+  --color-text-primary: #F1EEFD;
+  --color-text-secondary: #B8B1D8;
+  --color-text-muted: #7A7399;
+  --color-text-on-brand: #F1EEFD;
+
+  --color-border: #4A397A;
+  --color-border-light: #3D2F6B;
+  --color-divider: #3D2F6B;
+
+  --color-input-bg: #211735;
+  --color-input-border: #4A397A;
+  --color-input-focus: #6B55BA;
+  --color-input-placeholder: #7A7399;
+
+  --color-highlight: #322167;
+
+  --color-success: #22C55E;
+  --color-success-bg: rgba(34, 197, 94, 0.1);
+  --color-warning: #F59E0B;
+  --color-warning-bg: rgba(245, 158, 11, 0.1);
+  --color-error: #EF4444;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+
+  --color-shadow: rgba(0, 0, 0, 0.3);
+  --color-shadow-lg: rgba(0, 0, 0, 0.5);
+  --color-overlay: rgba(0, 0, 0, 0.6);
 }
 
 /* ===== استایل‌های پایه ===== */
@@ -49,31 +94,33 @@ html.dark {
 
 body {
   font-family: 'Vazirmatn', sans-serif;
-  background-color: var(--color-surface-alt);
-  color: var(--color-text);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
-  line-height: 1.6;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ===== انیمیشن‌ها ===== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInRight {
-  from { opacity: 0; transform: translateX(20px); }
+  from { opacity: 0; transform: translateX(24px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-20px); }
+  from { opacity: 0; transform: translateX(-24px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 .animate-fade-in {
@@ -90,18 +137,24 @@ body {
 
 /* ===== اسکرول‌بار ===== */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-surface);
+  background: var(--color-bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-text-muted);
-  border-radius: 3px;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-secondary);
+}
+
+/* ===== Selection ===== */
+::selection {
+  background-color: var(--color-brand);
+  color: var(--color-text-on-brand);
 }
