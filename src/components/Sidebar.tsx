@@ -8,14 +8,14 @@ import {
   LayoutDashboard,
   FolderKanban,
   Shield,
-  Users,
   FileText,
   Package,
-  ClipboardList,
   TrendingUp,
+  Users,
   ChevronDown,
   ChevronLeft,
   Settings,
+  ClipboardList,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -28,6 +28,7 @@ interface MenuItem {
   title: string;
   icon: React.ReactNode;
   children?: { id: string; title: string }[];
+  future?: boolean; // برای آیتم‌هایی که فقط اسم‌شان هست
 }
 
 const menuItems: MenuItem[] = [
@@ -50,6 +51,7 @@ const menuItems: MenuItem[] = [
     title: 'واحد QC',
     icon: <Shield size={20} />,
     children: [
+      { id: 'qc-dashboard', title: 'داشبورد QC' },
       { id: 'qc-joint-history', title: 'جوینت هیستوری QC' },
       { id: 'qc-welders', title: 'اطلاعات جوشکاران' },
       { id: 'qc-reports', title: 'گزارشات QC' },
@@ -110,6 +112,26 @@ export function Sidebar({ activeMenu, onMenuChange }: SidebarProps) {
     );
   };
 
+  const handleItemClick = (item: MenuItem) => {
+    if (item.children) {
+      toggleMenu(item.id);
+      // وقتی روی واحد اصلی کلیک می‌شود، به داشبورد آن واحد برو
+      if (item.id === 'qc') onMenuChange('qc-dashboard');
+      else if (item.id === 'office') onMenuChange('office-joint-history');
+      else if (item.id === 'warehouse') onMenuChange('warehouse-transactions');
+      else if (item.id === 'control') onMenuChange('control-daily');
+      else if (item.id === 'personnel') onMenuChange('personnel-list');
+      else if (item.id === 'projects') onMenuChange('projects-list');
+    } else {
+      onMenuChange(item.id);
+    }
+  };
+
+  const isParentActive = (item: MenuItem) => {
+    if (!item.children) return activeMenu === item.id;
+    return item.children.some(child => activeMenu === child.id) || activeMenu === item.id;
+  };
+
   return (
     <aside
       className="w-64 min-h-screen flex flex-col transition-all duration-300"
@@ -120,7 +142,7 @@ export function Sidebar({ activeMenu, onMenuChange }: SidebarProps) {
     >
       {/* لوگو */}
       <div
-        className="p-6 flex items-center gap-3"
+        className="p-5 flex items-center gap-3"
         style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}
       >
         <div
@@ -141,21 +163,15 @@ export function Sidebar({ activeMenu, onMenuChange }: SidebarProps) {
       </div>
 
       {/* منو */}
-      <nav className="flex-1 py-4 overflow-y-auto">
+      <nav className="flex-1 py-3 overflow-y-auto">
         {menuItems.map((item) => (
-          <div key={item.id} className="mb-1">
+          <div key={item.id} className="mb-0.5">
             <button
-              onClick={() => {
-                if (item.children) {
-                  toggleMenu(item.id);
-                } else {
-                  onMenuChange(item.id);
-                }
-              }}
-              className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium transition-all hover:bg-white/5"
+              onClick={() => handleItemClick(item)}
+              className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium transition-all hover:bg-white/5"
               style={{
-                color: activeMenu === item.id ? '#A18CE5' : '#B8B1D8',
-                backgroundColor: activeMenu === item.id ? 'rgba(161, 140, 229, 0.1)' : 'transparent',
+                color: isParentActive(item) ? '#A18CE5' : '#B8B1D8',
+                backgroundColor: isParentActive(item) ? 'rgba(161, 140, 229, 0.1)' : 'transparent',
               }}
             >
               <div className="flex items-center gap-3">
@@ -164,7 +180,7 @@ export function Sidebar({ activeMenu, onMenuChange }: SidebarProps) {
               </div>
               {item.children && (
                 <ChevronDown
-                  size={16}
+                  size={14}
                   className={`transition-transform ${
                     expandedMenus.includes(item.id) ? 'rotate-180' : ''
                   }`}
@@ -174,7 +190,7 @@ export function Sidebar({ activeMenu, onMenuChange }: SidebarProps) {
 
             {/* زیرمنو */}
             {item.children && expandedMenus.includes(item.id) && (
-              <div className="mr-4 mt-1 space-y-1">
+              <div className="mr-4 mt-0.5 space-y-0.5">
                 {item.children.map((child) => (
                   <button
                     key={child.id}
@@ -186,7 +202,7 @@ export function Sidebar({ activeMenu, onMenuChange }: SidebarProps) {
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <ChevronLeft size={12} />
+                      <ChevronLeft size={10} />
                       <span>{child.title}</span>
                     </div>
                   </button>
@@ -199,7 +215,7 @@ export function Sidebar({ activeMenu, onMenuChange }: SidebarProps) {
 
       {/* فوتر */}
       <div
-        className="p-4 text-center"
+        className="p-3 text-center"
         style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}
       >
         <p className="text-xs" style={{ color: '#7A7399' }}>

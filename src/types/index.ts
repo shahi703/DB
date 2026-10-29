@@ -328,6 +328,76 @@ export interface Column<T> {
   render?: (value: any, row: T) => React.ReactNode;
   editable?: boolean;
   required?: boolean;
+  unique?: boolean; // فیلد یکتا برای جلوگیری از تکرار
+  defaultValue?: any;
+  description?: string;
+}
+
+// ============================================
+// الگوی استاندارد فرم (Form Template)
+// ============================================
+export interface FormTemplate<T = any> {
+  formId: string;           // شناسه یکتای فرم
+  formName: string;         // نام نمایشی فرم
+  version: string;          // نسخه الگو
+  description?: string;
+  columns: Column<T>[];     // ستون‌های فرم
+  primaryKey: keyof T | string; // کلید اصلی
+  uniqueFields?: (keyof T | string)[]; // فیلدهای یکتا
+  validators?: Record<string, (value: any, row: Partial<T>) => string | null>;
+  defaultValues?: Partial<T>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ============================================
+// نتیجه عملیات Import
+// ============================================
+export interface ImportOperationResult<T = any> {
+  success: boolean;
+  formId: string;
+  formName: string;
+  totalRows: number;
+  validRows: number;
+  invalidRows: number;
+  insertedRows: number;
+  updatedRows: number;
+  skippedRows: number;
+  duplicateRows: number;
+  errors: ImportRowError[];
+  warnings: ImportRowWarning[];
+  data: Partial<T>[];
+  timestamp: string;
+}
+
+export interface ImportRowError {
+  row: number;
+  field: string;
+  message: string;
+  value?: any;
+  severity: 'error' | 'warning';
+}
+
+export interface ImportRowWarning {
+  row: number;
+  field: string;
+  message: string;
+  value?: any;
+}
+
+// ============================================
+// متادیتای فرم در فایل Excel
+// ============================================
+export interface FormMetadata {
+  formId: string;
+  formName: string;
+  version: string;
+  columnKeys: string[];
+  columnTitles: string[];
+  primaryKey: string;
+  exportedAt: string;
+  exportedBy: string;
+  totalRecords: number;
 }
 
 export interface TableConfig<T> {

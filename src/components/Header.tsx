@@ -1,21 +1,24 @@
 /**
  * کامپوننت هدر
- * شامل: دکمه تغییر تم، ساعت زنده، تاریخ شمسی
+ * شامل: دکمه تغییر تم، ساعت زنده، تاریخ شمسی، دکمه خروج
  */
 import { useThemeContext } from '../context/ThemeContext';
 import { useClock } from '../hooks/useClock';
 import { useJalaliDate } from '../hooks/useJalaliDate';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, LogOut } from 'lucide-react';
 
-export function Header() {
+interface HeaderProps {
+  onLogout: () => void;
+}
+
+export function Header({ onLogout }: HeaderProps) {
   const { theme, toggleTheme } = useThemeContext();
   const time = useClock();
   const date = useJalaliDate();
 
   return (
     <header
-      className="w-full flex items-center justify-between px-6 py-4 md:px-10 md:py-5"
-      style={{ borderBottom: '1px solid var(--color-divider)' }}
+      className="w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4"
     >
       {/* تاریخ و ساعت */}
       <div className="flex items-center gap-4 md:gap-6">
@@ -47,25 +50,41 @@ export function Header() {
         </div>
       </div>
 
-      {/* دکمه تغییر تم */}
-      <button
-        onClick={toggleTheme}
-        className="relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-out hover:scale-105 focus:outline-none focus:ring-2"
-        style={{
-          backgroundColor: theme === 'dark' ? 'var(--color-surface-elevated)' : 'var(--color-highlight)',
-          color: theme === 'dark' ? '#A18CE5' : 'var(--color-brand)',
-          border: '1px solid var(--color-border)',
-          boxShadow: theme === 'dark' ? '0 0 12px rgba(161, 140, 229, 0.15)' : 'none',
-        }}
-        aria-label={theme === 'dark' ? 'تغییر به حالت روشن' : 'تغییر به حالت تاریک'}
-        title={theme === 'dark' ? 'حالت روشن' : 'حالت تاریک'}
-      >
-        {theme === 'dark' ? (
-          <Sun size={18} strokeWidth={1.8} />
-        ) : (
-          <Moon size={18} strokeWidth={1.8} />
-        )}
-      </button>
+      <div className="flex items-center gap-2">
+        {/* دکمه تغییر تم */}
+        <button
+          onClick={toggleTheme}
+          className="relative flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 ease-out hover:scale-105 focus:outline-none focus:ring-2"
+          style={{
+            backgroundColor: theme === 'dark' ? 'var(--color-surface-elevated)' : 'var(--color-highlight)',
+            color: theme === 'dark' ? '#A18CE5' : 'var(--color-brand)',
+            border: '1px solid var(--color-border)',
+          }}
+          aria-label={theme === 'dark' ? 'تغییر به حالت روشن' : 'تغییر به حالت تاریک'}
+          title={theme === 'dark' ? 'حالت روشن' : 'حالت تاریک'}
+        >
+          {theme === 'dark' ? (
+            <Sun size={16} strokeWidth={1.8} />
+          ) : (
+            <Moon size={16} strokeWidth={1.8} />
+          )}
+        </button>
+
+        {/* دکمه خروج */}
+        <button
+          onClick={onLogout}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105"
+          style={{
+            backgroundColor: 'var(--color-error-bg)',
+            color: 'var(--color-error)',
+            border: '1px solid var(--color-error)',
+          }}
+          title="خروج از سیستم"
+        >
+          <LogOut size={14} />
+          <span className="hidden sm:inline">خروج</span>
+        </button>
+      </div>
     </header>
   );
 }

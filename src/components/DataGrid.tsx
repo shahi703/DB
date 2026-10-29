@@ -15,6 +15,7 @@ interface DataGridProps<T> {
   title: string;
   description?: string;
   primaryKey: keyof T;
+  formId?: string;
   onAdd?: () => void;
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
@@ -30,6 +31,7 @@ export function DataGrid<T extends Record<string, any>>({
   title,
   description,
   primaryKey,
+  formId,
   onAdd,
   onEdit,
   onDelete,
@@ -178,6 +180,7 @@ export function DataGrid<T extends Record<string, any>>({
               data={filteredData}
               fileName={title}
               sheetName={title}
+              formId={formId}
             />
           )}
 
@@ -419,7 +422,8 @@ export function DataGrid<T extends Record<string, any>>({
           onClose={() => setShowImportModal(false)}
           columns={columns}
           formType={title}
-          onImport={(importedData) => {
+          existingData={data}
+          onImport={(importedData: any) => {
             onImport(importedData);
             setShowImportModal(false);
           }}
