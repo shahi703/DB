@@ -22,7 +22,7 @@ export function Header() {
         {/* ساعت */}
         <div
           className="flex items-center gap-2 text-sm md:text-base font-medium tabular-nums"
-          style={{ color: 'var(--color-text)', direction: 'ltr' }}
+          style={{ color: 'var(--color-text-primary)', direction: 'ltr' }}
           aria-label={`ساعت: ${time}`}
         >
           <span className="hidden sm:inline" style={{ color: 'var(--color-text-secondary)' }}>
@@ -50,12 +50,12 @@ export function Header() {
       {/* دکمه تغییر تم */}
       <button
         onClick={toggleTheme}
-        className="relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2"
+        className="relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-out hover:scale-105 focus:outline-none focus:ring-2"
         style={{
-          backgroundColor: 'var(--color-surface)',
-          color: 'var(--color-text)',
+          backgroundColor: theme === 'dark' ? 'var(--color-surface-elevated)' : 'var(--color-highlight)',
+          color: theme === 'dark' ? '#A18CE5' : 'var(--color-brand)',
           border: '1px solid var(--color-border)',
-
+          boxShadow: theme === 'dark' ? '0 0 12px rgba(161, 140, 229, 0.15)' : 'none',
         }}
         aria-label={theme === 'dark' ? 'تغییر به حالت روشن' : 'تغییر به حالت تاریک'}
         title={theme === 'dark' ? 'حالت روشن' : 'حالت تاریک'}

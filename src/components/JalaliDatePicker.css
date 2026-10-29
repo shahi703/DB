@@ -1,0 +1,428 @@
+/* ═══════════════════════════════════════════
+   انتخابگر تاریخ شمسی (Jalali Date Picker)
+   استایل‌ها با پالت رنگی سازمانی
+   ═══════════════════════════════════════════ */
+
+.jp-wrap {
+    font-family: 'Vazirmatn', sans-serif;
+    direction: rtl;
+    width: 100%;
+    color: var(--color-text-primary);
+    position: relative;
+}
+
+.jp-wrap *, .jp-wrap *::before, .jp-wrap *::after {
+    box-sizing: border-box;
+}
+
+/* ── لیبل ── */
+.jp-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 6px;
+}
+
+/* ── فیلد ورودی ── */
+.jp-field {
+    position: relative;
+}
+
+.jp-input {
+    width: 100%;
+    padding: 10px 14px;
+    padding-left: 40px;
+    border: 1.5px solid var(--color-input-border);
+    border-radius: 12px;
+    background: var(--color-input-bg);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    text-align: center;
+}
+
+.jp-input::placeholder {
+    color: var(--color-input-placeholder);
+    font-weight: 400;
+    font-size: 0.75rem;
+}
+
+.jp-input:hover {
+    border-color: var(--color-brand-hover);
+}
+
+.jp-wrap.open .jp-input {
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-glow);
+}
+
+/* ── آیکون تقویم ── */
+.jp-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--color-brand);
+    pointer-events: none;
+    transition: color 0.2s;
+}
+
+.jp-wrap.open .jp-icon {
+    color: var(--color-brand-hover);
+}
+
+/* ── پنل انتخابگر ── */
+.jp-picker {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    width: 100%;
+    min-width: 260px;
+    max-width: 280px;
+    z-index: 9999;
+    background: var(--color-surface);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 20px 40px -12px var(--color-shadow-lg), 0 0 0 1px var(--color-shadow);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px) scale(0.96);
+    transform-origin: top center;
+    transition: opacity 0.2s, transform 0.2s cubic-bezier(0.3, 1.4, 0.5, 1), visibility 0.2s;
+}
+
+.jp-picker.open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+
+.jp-picker.up {
+    top: auto;
+    bottom: calc(100% + 6px);
+    transform-origin: bottom center;
+}
+
+/* ── هدر پنل ── */
+.jp-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    background: linear-gradient(135deg, var(--color-brand), var(--color-brand-hover));
+    padding: 8px 10px;
+    color: #fff;
+}
+
+.jp-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.jp-title-month,
+.jp-title-year {
+    border: none;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.jp-title-month:hover,
+.jp-title-year:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.02);
+}
+
+/* ── دکمه‌های ناوبری ── */
+.jp-nav {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    flex-shrink: 0;
+}
+
+.jp-nav:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: scale(1.05);
+}
+
+.jp-nav:active {
+    transform: scale(0.95);
+}
+
+.jp-nav svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ── بدنه پنل ── */
+.jp-body {
+    padding: 8px;
+    min-height: 180px;
+}
+
+/* ── روزهای هفته ── */
+.jp-wd {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+}
+
+.jp-wd span {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    padding: 3px 0;
+}
+
+.jp-wd span.fr {
+    color: var(--color-error);
+}
+
+/* ── شبکه روزها ── */
+.jp-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.jp-pad {
+    aspect-ratio: 1;
+}
+
+/* ── دکمه روز ── */
+.jp-day {
+    position: relative;
+    aspect-ratio: 1;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.15s, box-shadow 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jp-day:hover {
+    background: var(--color-highlight);
+    transform: scale(1.12);
+    box-shadow: 0 2px 6px var(--color-shadow);
+}
+
+.jp-day.fr {
+    background: var(--color-error-bg);
+    color: var(--color-error);
+    font-weight: 700;
+}
+
+.jp-day.fr:hover {
+    background: var(--color-error);
+    color: #fff;
+}
+
+.jp-day.today {
+    background: var(--color-brand);
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 2px 8px var(--color-brand-glow);
+}
+
+.jp-day.today:hover {
+    background: var(--color-brand-hover);
+    color: #fff;
+}
+
+.jp-day.sel {
+    background: var(--color-warning);
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
+}
+
+.jp-day.sel:hover {
+    background: var(--color-warning);
+    color: #fff;
+    filter: brightness(0.92);
+}
+
+/* ── شبکه ماه‌ها ── */
+.jp-months-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 4px;
+}
+
+.jp-month {
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    padding: 12px 4px;
+    transition: all 0.15s;
+}
+
+.jp-month:hover {
+    background: var(--color-highlight);
+    transform: scale(1.05);
+}
+
+.jp-month.today {
+    background: var(--color-brand);
+    color: #fff;
+}
+
+.jp-month.sel {
+    background: var(--color-warning);
+    color: #fff;
+    font-weight: 800;
+}
+
+/* ── شبکه سال‌ها ── */
+.jp-years-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 4px;
+}
+
+.jp-year {
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    padding: 12px 4px;
+    transition: all 0.15s;
+}
+
+.jp-year:hover {
+    background: var(--color-highlight);
+    transform: scale(1.05);
+}
+
+.jp-year.today {
+    background: var(--color-brand);
+    color: #fff;
+}
+
+.jp-year.sel {
+    background: var(--color-warning);
+    color: #fff;
+    font-weight: 800;
+}
+
+/* ── فوتر پنل ── */
+.jp-foot {
+    border-top: 1px dashed var(--color-border);
+    background: var(--color-highlight);
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.jp-today-label {
+    font-size: 9.5px;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.jp-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.jp-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 9.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.jp-btn:hover {
+    transform: scale(1.03);
+}
+
+.jp-btn:active {
+    transform: scale(0.97);
+}
+
+.jp-solid {
+    background: var(--color-brand);
+    color: #fff;
+}
+
+.jp-solid:hover {
+    background: var(--color-brand-hover);
+}
+
+.jp-ghost {
+    background: transparent;
+    color: var(--color-error);
+    box-shadow: inset 0 0 0 1.5px var(--color-error);
+}
+
+.jp-ghost:hover {
+    background: var(--color-error-bg);
+}
+
+/* ── ریسپانسیو ── */
+@media (max-width: 560px) {
+    .jp-picker {
+        position: fixed;
+        top: auto;
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        width: auto;
+        max-width: none;
+        min-width: 0;
+    }
+}
