@@ -106,6 +106,7 @@ export function ProjectsPage({ settingsMode }: ProjectsPageProps) {
         title="لیست پروژه‌ها"
         description="مدیریت اطلاعات عمومی پروژه‌های در حال اجرا"
         primaryKey="ProjectID"
+        formId="projects"
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}

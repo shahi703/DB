@@ -381,6 +381,7 @@ export function QCModule({ activeTab, onTabChange }: QCModuleProps) {
           title="جوینت هیستوری QC"
           description="مدیریت و پیگیری وضعیت جوینت‌های واحد کنترل کیفیت"
           primaryKey="Row"
+          formId="qc-joint-history"
           onAdd={() => handleAdd('joint')}
           onEdit={(joint) => handleAdd('joint')}
           onDelete={(joint) => setJoints(joints.filter(j => j.Row !== joint.Row))}
@@ -394,6 +395,7 @@ export function QCModule({ activeTab, onTabChange }: QCModuleProps) {
           title="اطلاعات جوشکاران"
           description="مدیریت صلاحیت‌ها و اطلاعات جوشکاران پروژه"
           primaryKey="WelderStamp"
+          formId="qc-welders"
           onAdd={() => handleAdd('welder')}
           onEdit={(welder) => handleAdd('welder')}
           onDelete={(welder) => setWelders(welders.filter(w => w.WelderStamp !== welder.WelderStamp))}

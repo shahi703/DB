@@ -1,11 +1,13 @@
 /**
- * کامپوننت دکمه خروجی - Excel, PDF, Print
+ * کامپوننت دکمه خروجی - Universal Export Engine UI
+ * خروجی Excel, PDF, Print, Template
  */
 import { useState } from 'react';
-import { FileSpreadsheet, Download, CheckCircle, XCircle, FileText, Printer } from 'lucide-react';
-import { exportToExcel, ExportResult } from '../services/ExportService';
-import { Column } from '../types';
+import { FileSpreadsheet, Download, CheckCircle, XCircle, FileText, Printer, FileDown } from 'lucide-react';
+import { exportToExcel, exportTemplate, ExportResult } from '../services/ExportService';
+import { Column, FormTemplate } from '../types';
 import { useThemeContext } from '../context/ThemeContext';
+import { FormTemplateRegistry } from '../services/FormTemplateRegistry';
 
 interface ExportButtonProps<T> {
   columns: Column<T>[];
@@ -13,6 +15,7 @@ interface ExportButtonProps<T> {
   fileName: string;
   sheetName?: string;
   selectedRows?: T[];
+  formId?: string;
 }
 
 export function ExportButton<T extends Record<string, any>>({
@@ -21,6 +24,7 @@ export function ExportButton<T extends Record<string, any>>({
   fileName,
   sheetName,
   selectedRows,
+  formId,
 }: ExportButtonProps<T>) {
   const { theme } = useThemeContext();
   const isDark = theme === 'dark';
@@ -28,12 +32,15 @@ export function ExportButton<T extends Record<string, any>>({
   const [result, setResult] = useState<ExportResult | null>(null);
   const [showMenu, setShowMenu] = useState(false);
 
+  // دریافت formTemplate از registry
+  const formTemplate = formId ? FormTemplateRegistry.get<T>(formId) : undefined;
+
   const handleExportExcel = (exportSelected: boolean = false) => {
     setIsExporting(true);
     setShowMenu(false);
 
     const exportData = exportSelected && selectedRows ? selectedRows : data;
-    const exportFileName = exportSelected ? `${fileName}_selected` : fileName;
+    const exportFileName = exportSelected ? `${fileName}_انتخاب_شده` : fileName;
 
     setTimeout(() => {
       const exportResult = exportToExcel({
@@ -41,6 +48,7 @@ export function ExportButton<T extends Record<string, any>>({
         data: exportData,
         fileName: exportFileName,
         sheetName,
+        formTemplate,
       });
 
       setResult(exportResult);
@@ -49,10 +57,14 @@ export function ExportButton<T extends Record<string, any>>({
     }, 500);
   };
 
+  const handleExportFiltered = () => {
+    setShowMenu(false);
+    handleExportExcel(false);
+  };
+
   const handleExportPDF = () => {
     setShowMenu(false);
     setIsExporting(true);
-
     setTimeout(() => {
       printReport('pdf');
       setIsExporting(false);
@@ -64,8 +76,24 @@ export function ExportButton<T extends Record<string, any>>({
     printReport('print');
   };
 
+  const handleDownloadTemplate = () => {
+    setShowMenu(false);
+    setIsExporting(true);
+    setTimeout(() => {
+      const exportResult = exportTemplate({
+        columns,
+        data: [],
+        fileName: `${fileName}_قالب_استاندارد`,
+        sheetName: 'قالب',
+        formTemplate,
+      });
+      setResult(exportResult);
+      setIsExporting(false);
+      setTimeout(() => setResult(null), 3000);
+    }, 300);
+  };
+
   const printReport = (mode: 'pdf' | 'print') => {
-    // ساخت HTML برای چاپ
     const headers = columns.map(col => col.title);
     const rows = data.map(item =>
       columns.map(col => {
@@ -86,18 +114,16 @@ export function ExportButton<T extends Record<string, any>>({
     @page { size: A4 landscape; margin: 15mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Tahoma, Arial, sans-serif; direction: rtl; padding: 20px; font-size: 11px; }
-    .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
-    .header h1 { font-size: 16px; margin-bottom: 5px; }
+    .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #4C35A3; padding-bottom: 10px; }
+    .header h1 { font-size: 16px; margin-bottom: 5px; color: #4C35A3; }
     .header p { font-size: 10px; color: #666; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th { background: #4C35A3; color: white; padding: 8px 6px; text-align: right; font-size: 10px; border: 1px solid #333; }
     td { padding: 6px; border: 1px solid #ddd; text-align: right; font-size: 10px; }
     tr:nth-child(even) { background: #f9f9f9; }
     .footer { margin-top: 15px; text-align: center; font-size: 9px; color: #999; border-top: 1px solid #ddd; padding-top: 10px; }
-    @media print {
-      body { padding: 0; }
-      .no-print { display: none; }
-    }
+    .template-info { background: #f0ecff; padding: 8px; border-radius: 4px; margin-bottom: 10px; font-size: 9px; color: #4C35A3; }
+    @media print { body { padding: 0; } .no-print { display: none; } }
   </style>
 </head>
 <body>
@@ -105,6 +131,7 @@ export function ExportButton<T extends Record<string, any>>({
     <h1>${fileName}</h1>
     <p>تاریخ چاپ: ${new Date().toLocaleDateString('fa-IR')} | تعداد رکوردها: ${data.length}</p>
   </div>
+  ${formTemplate ? `<div class="template-info">الگوی فرم: ${formTemplate.formName} | نسخه: ${formTemplate.version}</div>` : ''}
   <table>
     <thead>
       <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
@@ -113,9 +140,7 @@ export function ExportButton<T extends Record<string, any>>({
       ${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}
     </tbody>
   </table>
-  <div class="footer">
-    سیستم کنترل پروژه پایپینگ صنعتی — نسخه ۱.۰.۰
-  </div>
+  <div class="footer">سیستم کنترل پروژه پایپینگ صنعتی — Universal Export Engine</div>
   ${mode === 'pdf' ? '<script>window.onload = function() { window.print(); }</script>' : ''}
 </body>
 </html>`;
@@ -135,7 +160,7 @@ export function ExportButton<T extends Record<string, any>>({
       <button
         onClick={() => setShowMenu(!showMenu)}
         disabled={isExporting}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
         style={{
           backgroundColor: 'var(--color-success-bg)',
           color: 'var(--color-success)',
@@ -145,7 +170,7 @@ export function ExportButton<T extends Record<string, any>>({
         {isExporting ? (
           <>
             <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
-            در حال...
+            <span className="hidden sm:inline">در حال...</span>
           </>
         ) : (
           <>
@@ -158,13 +183,18 @@ export function ExportButton<T extends Record<string, any>>({
       {/* منوی گزینه‌ها */}
       {showMenu && (
         <div
-          className="absolute top-full mt-2 left-0 w-60 rounded-xl overflow-hidden shadow-lg z-50"
+          className="absolute top-full mt-2 left-0 w-64 rounded-xl overflow-hidden shadow-lg z-50"
           style={{
             backgroundColor: 'var(--color-surface)',
             border: '1px solid var(--color-border)',
           }}
         >
-          {/* Excel */}
+          {/* عنوان */}
+          <div className="px-4 py-2 text-xs font-bold" style={{ backgroundColor: 'var(--color-highlight)', color: 'var(--color-text-muted)', borderBottom: '1px solid var(--color-border)' }}>
+            Universal Export Engine
+          </div>
+
+          {/* Excel - همه */}
           <button
             onClick={() => handleExportExcel(false)}
             className="w-full flex items-center gap-3 px-4 py-3 text-sm text-right transition-colors"
@@ -174,10 +204,27 @@ export function ExportButton<T extends Record<string, any>>({
           >
             <FileSpreadsheet size={16} style={{ color: '#16A34A' }} />
             <div>
-              <div className="font-medium">خروجی Excel</div>
+              <div className="font-medium">خروجی Excel (همه)</div>
               <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{data.length} رکورد</div>
             </div>
           </button>
+
+          {/* Excel - انتخاب شده */}
+          {selectedRows && selectedRows.length > 0 && (
+            <button
+              onClick={() => handleExportExcel(true)}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm text-right transition-colors"
+              style={{ color: 'var(--color-text-primary)', borderBottom: '1px solid var(--color-border)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-highlight)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+            >
+              <FileSpreadsheet size={16} style={{ color: '#16A34A' }} />
+              <div>
+                <div className="font-medium">خروجی Excel (انتخاب‌شده)</div>
+                <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{selectedRows.length} رکورد</div>
+              </div>
+            </button>
+          )}
 
           {/* PDF */}
           <button
@@ -209,22 +256,20 @@ export function ExportButton<T extends Record<string, any>>({
             </div>
           </button>
 
-          {/* Selected rows */}
-          {selectedRows && selectedRows.length > 0 && (
-            <button
-              onClick={() => handleExportExcel(true)}
-              className="w-full flex items-center gap-3 px-4 py-3 text-sm text-right transition-colors"
-              style={{ color: 'var(--color-text-primary)' }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-highlight)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-            >
-              <Download size={16} style={{ color: 'var(--color-success)' }} />
-              <div>
-                <div className="font-medium">خروجی انتخاب‌شده‌ها</div>
-                <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{selectedRows.length} رکورد</div>
-              </div>
-            </button>
-          )}
+          {/* دانلود قالب */}
+          <button
+            onClick={handleDownloadTemplate}
+            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-right transition-colors"
+            style={{ color: 'var(--color-text-primary)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-highlight)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+          >
+            <FileDown size={16} style={{ color: 'var(--color-brand)' }} />
+            <div>
+              <div className="font-medium">دانلود قالب استاندارد</div>
+              <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>فایل خالی برای تکمیل و ورود مجدد</div>
+            </div>
+          </button>
         </div>
       )}
 
