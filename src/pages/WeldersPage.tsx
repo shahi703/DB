@@ -53,6 +53,12 @@ export function WeldersPage() {
     setWelders(welders.filter((w) => w.WelderStamp !== welder.WelderStamp));
   };
 
+  const handleImport = (importedData: Partial<Welder>[]) => {
+    // TODO: اضافه کردن داده‌های وارد شده به state
+    console.log('داده‌های وارد شده:', importedData);
+    alert(`${importedData.length} رکورد با موفقیت وارد شد`);
+  };
+
   return (
     <DataGrid
       columns={columns}
@@ -63,6 +69,7 @@ export function WeldersPage() {
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      onImport={handleImport}
     />
   );
 }

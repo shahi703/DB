@@ -4,8 +4,10 @@
  */
 import { useState, useMemo } from 'react';
 import { Column } from '../types';
-import { Search, Filter, Download, Printer, FileSpreadsheet, FileText, Plus, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Filter, Download, Printer, FileSpreadsheet, FileText, Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Upload } from 'lucide-react';
 import { useThemeContext } from '../context/ThemeContext';
+import { ExportButton } from './ExportButton';
+import { ImportModal } from './ImportModal';
 
 interface DataGridProps<T> {
   columns: Column<T>[];
@@ -16,7 +18,10 @@ interface DataGridProps<T> {
   onAdd?: () => void;
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
+  onImport?: (data: Partial<T>[]) => void;
   pageSize?: number;
+  enableExport?: boolean;
+  enableImport?: boolean;
 }
 
 export function DataGrid<T extends Record<string, any>>({
@@ -28,7 +33,10 @@ export function DataGrid<T extends Record<string, any>>({
   onAdd,
   onEdit,
   onDelete,
+  onImport,
   pageSize: initialPageSize = 10,
+  enableExport = true,
+  enableImport = true,
 }: DataGridProps<T>) {
   const { theme } = useThemeContext();
   const isDark = theme === 'dark';
@@ -39,6 +47,7 @@ export function DataGrid<T extends Record<string, any>>({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [showFilters, setShowFilters] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
 
   // فیلتر و جستجو
   const filteredData = useMemo(() => {
@@ -149,7 +158,7 @@ export function DataGrid<T extends Record<string, any>>({
         </div>
 
         {/* دکمه‌ها */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all hover:scale-105"
@@ -162,6 +171,30 @@ export function DataGrid<T extends Record<string, any>>({
             <Filter size={16} />
             فیلتر
           </button>
+
+          {enableExport && (
+            <ExportButton
+              columns={columns}
+              data={filteredData}
+              fileName={title}
+              sheetName={title}
+            />
+          )}
+
+          {enableImport && onImport && (
+            <button
+              onClick={() => setShowImportModal(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all hover:scale-105"
+              style={{
+                backgroundColor: 'var(--color-warning-bg)',
+                color: 'var(--color-warning)',
+                border: '1px solid var(--color-warning)',
+              }}
+            >
+              <Upload size={16} />
+              ورود از Excel
+            </button>
+          )}
 
           {onAdd && (
             <button
@@ -379,42 +412,19 @@ export function DataGrid<T extends Record<string, any>>({
         </div>
       </div>
 
-      {/* دکمه‌های صادرات */}
-      <div className="flex flex-wrap gap-2 mt-4">
-        <button
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105"
-          style={{
-            backgroundColor: 'var(--color-success-bg)',
-            color: 'var(--color-success)',
-            border: '1px solid var(--color-success)',
+      {/* مودال ورود اطلاعات */}
+      {enableImport && onImport && (
+        <ImportModal
+          isOpen={showImportModal}
+          onClose={() => setShowImportModal(false)}
+          columns={columns}
+          formType={title}
+          onImport={(importedData) => {
+            onImport(importedData);
+            setShowImportModal(false);
           }}
-        >
-          <FileSpreadsheet size={16} />
-          خروجی Excel
-        </button>
-        <button
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105"
-          style={{
-            backgroundColor: 'var(--color-error-bg)',
-            color: 'var(--color-error)',
-            border: '1px solid var(--color-error)',
-          }}
-        >
-          <FileText size={16} />
-          خروجی PDF
-        </button>
-        <button
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105"
-          style={{
-            backgroundColor: 'var(--color-highlight)',
-            color: 'var(--color-brand)',
-            border: '1px solid var(--color-border)',
-          }}
-        >
-          <Printer size={16} />
-          چاپ
-        </button>
-      </div>
+        />
+      )}
     </div>
   );
 }

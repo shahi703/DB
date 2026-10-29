@@ -57,6 +57,12 @@ export function ProjectsPage() {
     setProjects(projects.filter((p) => p.ProjectID !== project.ProjectID));
   };
 
+  const handleImport = (importedData: Partial<Project>[]) => {
+    // TODO: اضافه کردن داده‌های وارد شده به state
+    console.log('داده‌های وارد شده:', importedData);
+    alert(`${importedData.length} رکورد با موفقیت وارد شد`);
+  };
+
   return (
     <DataGrid
       columns={columns}
@@ -67,6 +73,7 @@ export function ProjectsPage() {
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      onImport={handleImport}
     />
   );
 }

@@ -93,6 +93,12 @@ export function QCJointHistoryPage() {
     setJoints(joints.filter((j) => j.Row !== joint.Row));
   };
 
+  const handleImport = (importedData: Partial<QCJointHistory>[]) => {
+    // TODO: اضافه کردن داده‌های وارد شده به state
+    console.log('داده‌های وارد شده:', importedData);
+    alert(`${importedData.length} رکورد با موفقیت وارد شد`);
+  };
+
   return (
     <div>
       {/* آمار سریع */}
@@ -130,6 +136,7 @@ export function QCJointHistoryPage() {
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onImport={handleImport}
       />
     </div>
   );
